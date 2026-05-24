@@ -1,10 +1,9 @@
-package user;
-
+package  user;
 
 public class User {
   public String username;
   public String password;
-  private String phone;
+  public String phone;
     
     public User(String username, String password, String phone){
         this.username = username;
