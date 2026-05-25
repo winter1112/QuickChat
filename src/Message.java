@@ -1,4 +1,5 @@
  
+import java.io.*;
 import java.util.ArrayList;
 
 public final class Message {
@@ -9,6 +10,7 @@ public final class Message {
     private String messageHash;
     
     private static final ArrayList<Message> allMessages = new ArrayList<>();
+    private static final String JSON_FILE ="messages.json";
     
     public Message(String recipientCell, String messageText) {
         this.messageID = generateMessageID();
@@ -87,7 +89,33 @@ public final class Message {
     }
     private void storeMessage() {
         allMessages.add(this);
+        saveToJson();
+        System.out.println("Saved to" + JSON_FILE);
     }
+    
+    private void saveToJson() {
+        StringBuilder sb = new StringBuilder("[\n");
+        for (int i = 0; i< allMessages.size(); i++) {
+            Message m = allMessages.get(i);
+            sb.append(String.format(
+            " {\"messageID\": %d, \"recipient\": \"%s\", \"message\": \"%s\", \"hash\": \"%s\"}",
+            m.messageID,
+            m.recipientCell,
+            m.messageText.replace("\"", "\\\""),
+            m.messageHash
+            ));
+            if (i < allMessages.size() -1) sb.append(",");
+            sb.append("\n");
+        }
+        sb.append("]");
+        
+        try (FileWriter fw = new FileWriter(JSON_FILE, false)) {
+            fw.write(sb.toString());
+            System.out.println("File Message saved to " + JSON_FILE);
+        } catch (IOException e) {
+                System.out.println("Error saving Json: " + e.getMessage());
+                }
+            }
     
     public static String printMessages() {
         if (allMessages.isEmpty()) {
@@ -116,5 +144,13 @@ public final class Message {
                 "Message      : " + messageText + "\n" +
                 "Message Hash : " + messageHash;
     }
+
     
-}
+      
+    }
+
+    
+       
+    
+    
+
